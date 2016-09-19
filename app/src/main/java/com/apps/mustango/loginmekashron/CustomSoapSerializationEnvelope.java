@@ -17,16 +17,24 @@ public class CustomSoapSerializationEnvelope extends SoapSerializationEnvelope{
     // private void CustomSoapSerializationEnvelope(){}
     @Override
     public void write(XmlSerializer writer) throws IOException {
-        writer.setPrefix("i", xsi);
-        writer.setPrefix("d", xsd);
-        writer.setPrefix("c", enc);
-        writer.setPrefix("soap", env); // <-- changed line
+        writer.setPrefix("env", env); // <-- changed line
+
+       // writer.setPrefix("env","http://www.w3.org/2003/05/soap-envelope");
+        writer.setPrefix("ns1", "urn:General.Intf-IGeneral" );
+        // writer.setPrefix("enc", enc);
+        writer.setPrefix("xsd", xsd);
+        writer.setPrefix("xsi", xsi);
+      //  writer.setPrefix("env","http://www.w3.org/2003/05/soap-envelope");
+        writer.setPrefix("enc","http://www.w3.org/2003/05/soap-encoding");
         writer.startTag(env, "Envelope");
-        writer.startTag(env, "Header");
-        writeHeader(writer);
-        writer.endTag(env, "Header");
+       // writer.startTag(env, "Header");
+       // writeHeader(writer);
+      //  writer.endTag(env, "Header");
         writer.startTag(env, "Body");
+        //writer.setPrefix();
+       // writer.startTag("ns1","Login");
         writeBody(writer);
+       // writer.endTag("ns1","Login");
         writer.endTag(env, "Body");
         writer.endTag(env, "Envelope");
     }

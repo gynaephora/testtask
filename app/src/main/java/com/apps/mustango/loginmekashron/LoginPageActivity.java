@@ -24,11 +24,11 @@ public class LoginPageActivity extends AppCompatActivity {
 
     private static String SOAP_ACTION = "http://isapi.mekashron.com/StartAJob/General.dll/Login";
 
+   // private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
     private static String NAMESPACE = "http://isapi.mekashron.com/StartAJob/General.dll";
     private static String METHOD_NAME = "Login";
 
-    private static String URL = "http://isapi.mekashron.com/StartAJob/General.dll/wsdl/IGeneral";
-
+ private static String URL = "http://isapi.mekashron.com/StartAJob/General.dll/wsdl/IGeneral";
 
     EditText loginField;
     EditText passwordField;
