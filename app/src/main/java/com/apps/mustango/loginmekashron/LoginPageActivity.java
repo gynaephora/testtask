@@ -22,10 +22,10 @@ import retrofit2.Call;
 public class LoginPageActivity extends AppCompatActivity {
 
 
-    private static String SOAP_ACTION = "http://isapi.mekashron.com/StartAJob/General.dll/Login";
-
+//    private static String SOAP_ACTION = "http://isapi.mekashron.com/StartAJob/General.dll/Login";
+    private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php";
    // private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
-    private static String NAMESPACE = "http://isapi.mekashron.com/StartAJob/General.dll/Login";
+    private static String NAMESPACE = "http://isapi.mekashron.com/StartAJob/General.dll";
   // private static String NAMESPACE ="http://www.w3.org/2003/05/soap-encoding";
     private static String METHOD_NAME = "Login";
 
@@ -57,9 +57,9 @@ public class LoginPageActivity extends AppCompatActivity {
                         .execute(json);
 */
 
-                new AsyncTask<Void, Void, Void>() {
+                new AsyncTask<String, Void, Void>() {
                     @Override
-                    protected Void doInBackground(Void... params) {
+                    protected Void doInBackground(String... params) {
                         try{
                          /*   LoginService loginService =
                                     ServiceGenerator.createService(LoginService.class, "Volodymyr", "qwerty123");
@@ -76,9 +76,11 @@ public class LoginPageActivity extends AppCompatActivity {
                                     .addProperty("Password","Candy")
                                     .addProperty("IP","192.168.1.1");
                             //Declare the version of the SOAP request
-                          //  SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.ENV2003);
+                          //  SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
                           //  String ENV2001="http://www.w3.org/2003/05/soap-envelope";
-                            CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
+                         CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
+                          //  envelope.dotNet = false;
+                         //   envelope.setAddAdornments(false);
                          // SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
                             envelope.setOutputSoapObject(request);
 
@@ -95,7 +97,7 @@ public class LoginPageActivity extends AppCompatActivity {
                             SoapObject result = (SoapObject)envelope.bodyIn;
 
                             if(result != null){
-                               // TextView t = (TextView)this.findViewById(R.id.resultbox);
+                                // TextView t = (TextView)this.findViewById(R.id.resultbox);
                                 Log.i("response",result.getProperty(0).toString());
                                 //Get the first property and change the label text
                             //    t.setText("SOAP response:\n\n" + result.getProperty(0).toString());
