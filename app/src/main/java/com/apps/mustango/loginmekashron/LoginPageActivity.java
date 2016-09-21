@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -18,6 +19,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.io.IOException;
 
 import retrofit2.Call;
+import retrofit2.http.HTTP;
 
 public class LoginPageActivity extends AppCompatActivity {
 
@@ -61,7 +63,8 @@ public class LoginPageActivity extends AppCompatActivity {
                     @Override
                     protected Void doInBackground(String... params) {
                         try{
-                         /*   LoginService loginService =
+
+                         /*  LoginService loginService =
                                     ServiceGenerator.createService(LoginService.class, "Volodymyr", "qwerty123");
                             Call<User> call = loginService.basicLogin();
                             User user = call.execute().body();
@@ -69,20 +72,15 @@ public class LoginPageActivity extends AppCompatActivity {
                             Log.i("request2",user.mPassword);*/
 //Initialize soap request + add parameters
                            // SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
                             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-                            //Use this to add parameters
-                           //  request.addProperty("params","UserName=Volodymyr&Password=qwerty123&IP=192.168.1.1");
                             request.addProperty("UserName","John")
                                     .addProperty("Password","Candy")
                                     .addProperty("IP","192.168.1.1");
                             //Declare the version of the SOAP request
-                          //  SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
-                          //  String ENV2001="http://www.w3.org/2003/05/soap-envelope";
-                         CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
-                          //  envelope.dotNet = false;
-                         //   envelope.setAddAdornments(false);
-                         // SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
-                            envelope.setOutputSoapObject(request);
+                        //CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
+                            CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(CustomSoapEnvelop.VER11);
+                        envelope.setOutputSoapObject(request);
 
                             //Needed to make the internet call
                             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
@@ -92,7 +90,6 @@ public class LoginPageActivity extends AppCompatActivity {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
                             // Get the SoapResult from the envelope body.
                             SoapObject result = (SoapObject)envelope.bodyIn;
 
@@ -102,6 +99,9 @@ public class LoginPageActivity extends AppCompatActivity {
                                 //Get the first property and change the label text
                             //    t.setText("SOAP response:\n\n" + result.getProperty(0).toString());
                             }
+
+
+
 /*
                           Post rr= new Post();
                             rr.PostR("https://isapi.mekashron.com/StartAJob/General.dll");
