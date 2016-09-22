@@ -3,7 +3,6 @@ package com.apps.mustango.loginmekashron;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,16 +16,12 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.io.IOException;
-
-import retrofit2.Call;
-import retrofit2.http.HTTP;
 
 public class LoginPageActivity extends AppCompatActivity {
 
 
-//    private static String SOAP_ACTION = "http://isapi.mekashron.com/StartAJob/General.dll/Login";
-    private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php";
+    private static String SOAP_ACTION = "http://isapi.mekashron.com/StartAJob/General.dll/Login";
+    //private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php";
    // private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
     private static String NAMESPACE = "http://isapi.mekashron.com/StartAJob/General.dll";
   // private static String NAMESPACE ="http://www.w3.org/2003/05/soap-encoding";
@@ -60,9 +55,9 @@ public class LoginPageActivity extends AppCompatActivity {
                         .execute(json);
 */
 
-                new AsyncTask<String, Void, Void>() {
+                new AsyncTask<Void, Void, Void>() {
                     @Override
-                    protected Void doInBackground(String... params) {
+                    protected Void doInBackground(Void... params) {
                         try{
 
                          /*  LoginService loginService =
@@ -72,20 +67,14 @@ public class LoginPageActivity extends AppCompatActivity {
                             Log.i("request1",user.mName);
                             Log.i("request2",user.mPassword);*/
 //Initialize soap request + add parameters
-                           // SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-                          //  SoapPrimitive request=new SoapPrimitive(NAMESPACE, METHOD_NAME,"{"UserName":"John";"Password":"123456";"IP':'192.168.1.1'}");
+
                             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
                             request.addProperty("UserName","John")
                                     .addProperty("Password","Candy")
                                     .addProperty("IP","192.168.1.1");
-                            //Declare the version of the SOAP request
-                        //CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
-                          CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(CustomSoapEnvelop.VER11);
 
-                           // SoapEnvelope envelope=new SoapEnvelope(SoapEnvelope.VER11);
-                            //(SoapObject)envelope.bodyIn;
-                        envelope.setOutputSoapObject(request);
-
+                            CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(CustomSoapEnvelop.VER12);
+                            envelope.setOutputSoapObject(request);
                             //Needed to make the internet call
                             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
                             try {
@@ -98,18 +87,10 @@ public class LoginPageActivity extends AppCompatActivity {
                             SoapObject result = (SoapObject)envelope.bodyIn;
 
                             if(result != null){
-                                // TextView t = (TextView)this.findViewById(R.id.resultbox);
                                 Log.i("response",result.getProperty(0).toString());
                                 //Get the first property and change the label text
                             //    t.setText("SOAP response:\n\n" + result.getProperty(0).toString());
                             }
-
-
-
-/*
-                          Post rr= new Post();
-                            rr.PostR("https://isapi.mekashron.com/StartAJob/General.dll");
-*/
                         }catch(Exception e){
                             //do something
                         }
@@ -157,3 +138,6 @@ public class LoginPageActivity extends AppCompatActivity {
 */
 
 }
+
+
+
