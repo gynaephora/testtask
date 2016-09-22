@@ -1,6 +1,7 @@
 package com.apps.mustango.loginmekashron;
 
 import org.ksoap2.SoapEnvelope;
+
 import org.kxml2.kdom.Node;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -20,6 +21,25 @@ public class CustomSoapEnvelop extends SoapEnvelope {
     }
 
     // private void CustomSoapSerializationEnvelope(){}
+    public void write(XmlSerializer writer) throws IOException {
+
+
+        writer.setPrefix("env", env); // <-- changed line
+        writer.setPrefix("ns1", ns1 );
+        writer.setPrefix("xsd", xsd);
+        writer.setPrefix("xsi", xsi);
+        writer.setPrefix("enc",enc);
+        writer.startTag(env, "Envelope");
+        writer.startTag(env, "Body");
+        // writer.startTag(ns1,"Login");
+        // writer.attribute(this.env, "encodingStyle", "http://www.w3.org/2003/05/soap-encoding");
+        //  writeBody(writer);
+        writeBody(writer);
+        //  writer.endTag(ns1,"Login");
+        // this.writeElement(writer, this.bodyOut, (PropertyInfo)null, qName[3]);
+        writer.endTag(env, "Body");
+        writer.endTag(env, "Envelope");
+    }
 
     public void writeBody(XmlSerializer writer) throws IOException {
         if (encodingStyle != null) {

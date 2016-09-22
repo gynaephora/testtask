@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -72,14 +73,17 @@ public class LoginPageActivity extends AppCompatActivity {
                             Log.i("request2",user.mPassword);*/
 //Initialize soap request + add parameters
                            // SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-
+                          //  SoapPrimitive request=new SoapPrimitive(NAMESPACE, METHOD_NAME,"{"UserName":"John";"Password":"123456";"IP':'192.168.1.1'}");
                             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
                             request.addProperty("UserName","John")
                                     .addProperty("Password","Candy")
                                     .addProperty("IP","192.168.1.1");
                             //Declare the version of the SOAP request
                         //CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
-                            CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(CustomSoapEnvelop.VER11);
+                          CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(CustomSoapEnvelop.VER11);
+
+                           // SoapEnvelope envelope=new SoapEnvelope(SoapEnvelope.VER11);
+                            //(SoapObject)envelope.bodyIn;
                         envelope.setOutputSoapObject(request);
 
                             //Needed to make the internet call
