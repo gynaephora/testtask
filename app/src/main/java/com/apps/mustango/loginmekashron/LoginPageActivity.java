@@ -1,5 +1,6 @@
 package com.apps.mustango.loginmekashron;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,20 +62,23 @@ public class LoginPageActivity extends AppCompatActivity {
                             .addProperty("Password",password)
                             .addProperty("IP","192.168.1.1");
 
-                    CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(CustomSoapEnvelop.VER12);
+                    CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
                     envelope.setOutputSoapObject(request);
+                    Log.i("request",envelope.toString());
                     //Needed to make the internet call
                     HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
                     try {
                         //this is the actual part that will call the webservice
                           androidHttpTransport.call(SOAP_ACTION, envelope);
                           SoapObject result = (SoapObject)envelope.getResponse();
+
                           if(result != null){
                             Log.i("response",result.getProperty(0).toString());
                             response=result.toString();
                         }
                         }catch (Exception e) {
                                  e.printStackTrace();
+                        response="";
                     }
                     // Get the SoapResult from the envelope body.
                   //  SoapObject result = (SoapObject)envelope.bodyIn;
@@ -90,7 +94,13 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String response) {
                 final TextView resultMessage = (TextView) findViewById(R.id.textView);
-                resultMessage.setText(response);
+                if(response !="") {
+                    resultMessage.setText(response);
+                }
+                else {
+                    resultMessage.setText("bad response");
+                    resultMessage.setTextColor(Color.MAGENTA);
+                }
                 Log.i("response",response.toString());
             }
 
