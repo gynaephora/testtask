@@ -2,6 +2,7 @@ package com.apps.mustango.loginmekashron;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,15 +19,21 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Vector;
+
+import okhttp3.Call;
+import okhttp3.Response;
+import retrofit2.http.HTTP;
 
 
 public class LoginPageActivity extends AppCompatActivity {
 
-    private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
-    private static String NAMESPACE = "http://isapi.mekashron.com/StartAJob/General.dll/";
-    private static String METHOD_NAME = "Login";
-    private static String URL = "http://isapi.mekashron.com/StartAJob/General.dll/wsdl/IGeneral";
-
+   // private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
+   private static String SOAP_ACTION ="urn:General.Intf-IGeneral#Login";
+   private static String NAMESPACE = "urn:General.Intf-IGeneral";
+   private static String METHOD_NAME = "Login";
+   private static String URL ="http://isapi.mekashron.com/StartAJob/General.dll/soap/IGeneral";
     RequestItemTask requestItemTask=null;
 
     @Override
@@ -62,16 +69,26 @@ public class LoginPageActivity extends AppCompatActivity {
                             .addProperty("Password",password)
                             .addProperty("IP","192.168.1.1");
 
+
                     CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
+                    envelope.encodingStyle = "http://www.w3.org/2003/05/soap-encoding";
                     envelope.setOutputSoapObject(request);
                     Log.i("request",envelope.toString());
                     //Needed to make the internet call
-                    HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+                    //envelope.bodyOut = null;
+                  //  envelope.dotNet=false;
+                   // envelope.encodingStyle="http://www.w3.org/2003/05/soap-encoding";
+                   HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+                  //  HttpTransportSE androidHttpTransport = new HttpTransportSE(
+                     //       "http://isapi.mekashron.com/StartAJob/General.dll");
                     try {
                         //this is the actual part that will call the webservice
-                          androidHttpTransport.call(SOAP_ACTION, envelope);
-                          SoapObject result = (SoapObject)envelope.getResponse();
+                        // androidHttpTransport.call("http://isapi.mekashron.com/StartAJob/General.dll", envelope);
 
+                       androidHttpTransport.call(SOAP_ACTION, envelope);
+
+                          SoapObject result = (SoapObject)envelope.getResponse();
+                        Log.i("response",result.toString());
                           if(result != null){
                             Log.i("response",result.getProperty(0).toString());
                             response=result.toString();
@@ -105,6 +122,58 @@ public class LoginPageActivity extends AppCompatActivity {
             }
 
         }
+/*
+       String request(String[] args){
+        String encodingStyleURI = "http://www.w3.org/2003/05/soap-encoding";
+        String message;
+        if ( args.length != 0 )
+            message = args[0];
+        else
+            message = "Thanks!";
+        // попытка удаленного вызова процедуры SOAP
+        try {
+            URL url  =new URL("http://isapi.mekashron.com/StartAJob/General.dll" );
+            // формирование вызова
+            Call remoteMethod = new Call();
+            remoteMethod.setTargetObjectURI("urn: jcml-simple-message" ) ;
+            // задание имени вызываемого удаленного метода
+            remoteMethod.setMethodName("Login");
+            remoteMethod.setEncodingStyleORI(encodingStyleURI);
+            // задание параметров для удаленного метода
+            Vector parameters = new Vector();
+            parameters.addElement( new Parameter( "message",
+                    String.class, message, null ) );
+            remoteMethod.setParams( parameters );
+            Response response;
+            // вызов удаленного метода
+            response = remoteMethod.invoke( url, "" );
+            // получение ответа
+            if ( response.generatedFault() ) {
+                Fault fault = responee.getFault();
+                System.err.println( "CALL FAILED:\nFault Code = "
+                        + fault.getFaultCode()+ "\nFault String = "
+                        + fault.getFaultString() );
+            }
+            else {
+                Parameter result = response.getReturnValue();
+                // отображение результатов вызова
+                System.out.println( result.getValue() );
+            }
+        }
+        // перехват исключения при указании неверного URL
+        catch ( MalformedURLException malformedURLException ) {
+            malformedURLException.printStackTrace();
+            System.exit( 1 );
+        }
+        // перехват исключения SOAPException
+        catch ( SOAPException soapException ) {
+            System.err.printin( "Error message: " +	soapException.getMessage() );
+            System.exit( 1 );
+        }
+
+
+return args;
+}*/
     }
 
 
