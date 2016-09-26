@@ -35,7 +35,7 @@ public class LoginPageActivity extends AppCompatActivity {
    private static String METHOD_NAME = "Login";
    private static String URL ="http://isapi.mekashron.com/StartAJob/General.dll/soap/IGeneral";
     RequestItemTask requestItemTask=null;
-
+    HttpTransportSE androidHttpTransport;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,26 +71,31 @@ public class LoginPageActivity extends AppCompatActivity {
 
 
                     CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
-                    envelope.encodingStyle = "http://www.w3.org/2003/05/soap-encoding";
                     envelope.setOutputSoapObject(request);
                     Log.i("request",envelope.toString());
                     //Needed to make the internet call
-                    //envelope.bodyOut = null;
-                  //  envelope.dotNet=false;
-                   // envelope.encodingStyle="http://www.w3.org/2003/05/soap-encoding";
-                   HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-                  //  HttpTransportSE androidHttpTransport = new HttpTransportSE(
-                     //       "http://isapi.mekashron.com/StartAJob/General.dll");
+                    HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+
+                    //HttpTransportSE androidHttpTransport = new HttpTransportSE(
+                    //"http://isapi.mekashron.com/StartAJob/General.dll");
                     try {
                         //this is the actual part that will call the webservice
                         // androidHttpTransport.call("http://isapi.mekashron.com/StartAJob/General.dll", envelope);
-
+                        androidHttpTransport.debug = true;
                        androidHttpTransport.call(SOAP_ACTION, envelope);
-
-                          SoapObject result = (SoapObject)envelope.getResponse();
-                        Log.i("response",result.toString());
+                        if(androidHttpTransport!=null) {
+                            Log.i("HTTP request", androidHttpTransport.requestDump);
+                            Log.i("HTTP response", androidHttpTransport.responseDump);
+                        }
+                        SoapObject result = (SoapObject)envelope.bodyIn;
+                        SoapObject t=(SoapObject)result.getProperty(0);
+                        //result.getProperty("LoginResponse");
+                        Log.i("response",t.toString());
+                     //  SoapObject result = (SoapObject)envelope.bodyIn;
+                     //  Log.i("response",result.getProperty("result").toString());
+//
                           if(result != null){
-                            Log.i("response",result.getProperty(0).toString());
+                            Log.i("response",result.toString());
                             response=result.toString();
                         }
                         }catch (Exception e) {
@@ -99,9 +104,6 @@ public class LoginPageActivity extends AppCompatActivity {
                     }
                     // Get the SoapResult from the envelope body.
                   //  SoapObject result = (SoapObject)envelope.bodyIn;
-
-
-
                 }catch(Exception e){
                     //do something
                 }
