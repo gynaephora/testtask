@@ -1,12 +1,9 @@
 package com.apps.mustango.loginmekashron;
 
-import org.ksoap2.SoapFault;
-import org.ksoap2.SoapFault12;
-import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
-import java.util.Vector;
+
 
 
 /**
@@ -24,7 +21,7 @@ public class CustomSoapSerializationEnvelope extends SoapSerializationEnvelope{
     @Override
     public void write(XmlSerializer writer) throws IOException {
         super.addAdornments=false;
-    //   super.dotNet=false;
+     // super.dotNet=false;
         writer.setPrefix("env",env); // <-- changed line
         writer.setPrefix("ns1", ns1 );
         writer.setPrefix("xsd",xsd);
@@ -33,31 +30,8 @@ public class CustomSoapSerializationEnvelope extends SoapSerializationEnvelope{
 
         writer.startTag(env, "Envelope");
         writer.startTag(env, "Body");
-      //  writer.startTag(ns1, "Login");
-       // writer.attribute(this.env, "encodingStyle", this.encodingStyle);
-         writeBody(writer);
-       // writer.attribute(this.env, "encodingStyle", this.encodingStyle);
-       /* writer.startTag("","UserName");
-        writer.attribute(xsi, "type", "xsd:string");
-        writer.text("");
-        writer.endTag("","UserName");
-      /*  writer.attribute(xsi, "encodingStyle", "xsd:string");
-        writer.attribute(xsi, "encodingStyle", "xsd:string");
-
-        writer.startTag("","password");
-        writer.attribute(xsi, "type", "xsd:string");
-        writer.text("");
-        writer.endTag("","password");
-        writer.startTag("","IP");
-        writer.attribute(xsi, "type", "xsd:string");
-        writer.text("");
-        writer.endTag("","IP");*/
-      //  writer.endTag(ns1, "Login");
+        writeBody(writer);
         writer.endTag(env, "Body");
         writer.endTag(env, "Envelope");
     }
-
-
-
-
 }

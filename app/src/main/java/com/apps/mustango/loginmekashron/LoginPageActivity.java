@@ -10,27 +10,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Vector;
 
-import okhttp3.Call;
-import okhttp3.Response;
-import retrofit2.http.HTTP;
 
 
 public class LoginPageActivity extends AppCompatActivity {
 
-   // private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
-   private static String SOAP_ACTION ="urn:General.Intf-IGeneral#Login";
+  // private static String SOAP_ACTION = "http://isapi.mekashron.com/soapclient/soapclient.php?URL=http://isapi.mekashron.com/StartAJob/General.dll%2Fwsdl%2FIGeneral";
+    private static String SOAP_ACTION ="urn:General.Intf-IGeneral#Login";
    private static String NAMESPACE = "urn:General.Intf-IGeneral";
    private static String METHOD_NAME = "Login";
    private static String URL ="http://isapi.mekashron.com/StartAJob/General.dll/soap/IGeneral";
@@ -48,10 +44,16 @@ public class LoginPageActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
-                String[] par={loginField.getText().toString(),passwordField.getText().toString()};
-                requestItemTask = (RequestItemTask) new RequestItemTask().execute(par);
-
+                String login=loginField.getText().toString();
+                String pass=passwordField.getText().toString();
+                if(login.equals("") | pass.equals("")){
+                    Toast t=Toast.makeText(getApplicationContext(),"The field Login and Password cannot be empty. Please fill it",Toast.LENGTH_LONG);
+                    t.show();
+                }
+                else {
+                    String[] par = {login, pass};
+                    requestItemTask = (RequestItemTask) new RequestItemTask().execute(par);
+            }
             }
         });
     }
@@ -62,7 +64,7 @@ public class LoginPageActivity extends AppCompatActivity {
                 String response = "";
                 String username=string[0];
                 String password=string[1];
-                //  postRequest.PostRequest("http://isapi.mekashron.com/StartAJob/General.dll",json);
+
                 try {
                     SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
                     request.addProperty("UserName",username)
@@ -76,40 +78,42 @@ public class LoginPageActivity extends AppCompatActivity {
                     //Needed to make the internet call
                     HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
                     androidHttpTransport.debug = true;
-                    //HttpTransportSE androidHttpTransport = new HttpTransportSE(
-                    //"http://isapi.mekashron.com/StartAJob/General.dll");
-                    try {
-                        //this is the actual part that will call the webservice
-                        // androidHttpTransport.call("http://isapi.mekashron.com/StartAJob/General.dll", envelope);
 
+                    try {
+                        //call the webservice
                        androidHttpTransport.call(SOAP_ACTION, envelope);
 
-                        if(androidHttpTransport!=null) {
+                       if(androidHttpTransport!=null) {
                             Log.i("HTTP request", androidHttpTransport.requestDump);
                             Log.i("HTTP response", androidHttpTransport.responseDump);
                         }
-                    envelope.enc="http://schemas.xmlsoap.org/soap/encoding/";
+                      envelope.enc="http://schemas.xmlsoap.org/soap/encoding/";
                       envelope.env="http://schemas.xmlsoap.org/soap/envelope/";
-                      SoapObject result=(SoapObject)envelope.bodyIn;
-                      SoapPrimitive rr=(SoapPrimitive)result.getPrimitiveProperty("return");
-                     //result.getProperty("LoginResponse");
-                      Log.i("response",rr.toString());
-                       // Log.i("response",t.getProperty());
-                     //  SoapObject result = (SoapObject)envelope.bodyIn;
-                     //  Log.i("response",result.getProperty("result").toString());
-///*
-                         /* if(result != null){
-                            Log.i("response",result.toString());
-                            response=result.toString();
-                        }*/
+                   // SoapObject result=(SoapObject)envelope.bodyIn;
+                        if (envelope.bodyIn instanceof SoapFault) {
+                            String strFault = ((SoapFault) envelope.bodyIn).faultstring;
+                            Log.i("SOAP Request : ",androidHttpTransport.requestDump);
+                            Log.i("Fault string : ",strFault);
+                        } else {
+                            Object object = envelope.getResponse();
+                            JSONObject jObject = new JSONObject(object.toString());
+                            String aJsonString;
+                            try {
+                                aJsonString = jObject.getString("ResultMessage");
+                            }catch(Exception e){
+                                aJsonString=jObject.toString();
+                            }
+                         response=aJsonString;
+                        }
+
                         }catch (Exception e) {
                                  e.printStackTrace();
-                        response="";
+                        response="HTTP request failed";
                     }
                     // Get the SoapResult from the envelope body.
-                  //  SoapObject result = (SoapObject)envelope.bodyIn;
+
                 }catch(Exception e){
-                    //do something
+                    response="HTTP request failed";
                 }
                 return response;
             }
@@ -117,70 +121,18 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String response) {
                 final TextView resultMessage = (TextView) findViewById(R.id.textView);
-                if(response !="") {
-                    resultMessage.setText(response);
+                if(response !="HTTP request failed") {
+                    resultMessage.setText("HTTP request succes"+"\n"+response);
                 }
                 else {
-                    resultMessage.setText("bad response");
-                    resultMessage.setTextColor(Color.MAGENTA);
+                    resultMessage.setText(response);
+                    resultMessage.setTextColor(Color.RED);
                 }
                 Log.i("response",response.toString());
             }
-
-        }
-/*
-       String request(String[] args){
-        String encodingStyleURI = "http://www.w3.org/2003/05/soap-encoding";
-        String message;
-        if ( args.length != 0 )
-            message = args[0];
-        else
-            message = "Thanks!";
-        // попытка удаленного вызова процедуры SOAP
-        try {
-            URL url  =new URL("http://isapi.mekashron.com/StartAJob/General.dll" );
-            // формирование вызова
-            Call remoteMethod = new Call();
-            remoteMethod.setTargetObjectURI("urn: jcml-simple-message" ) ;
-            // задание имени вызываемого удаленного метода
-            remoteMethod.setMethodName("Login");
-            remoteMethod.setEncodingStyleORI(encodingStyleURI);
-            // задание параметров для удаленного метода
-            Vector parameters = new Vector();
-            parameters.addElement( new Parameter( "message",
-                    String.class, message, null ) );
-            remoteMethod.setParams( parameters );
-            Response response;
-            // вызов удаленного метода
-            response = remoteMethod.invoke( url, "" );
-            // получение ответа
-            if ( response.generatedFault() ) {
-                Fault fault = responee.getFault();
-                System.err.println( "CALL FAILED:\nFault Code = "
-                        + fault.getFaultCode()+ "\nFault String = "
-                        + fault.getFaultString() );
-            }
-            else {
-                Parameter result = response.getReturnValue();
-                // отображение результатов вызова
-                System.out.println( result.getValue() );
-            }
-        }
-        // перехват исключения при указании неверного URL
-        catch ( MalformedURLException malformedURLException ) {
-            malformedURLException.printStackTrace();
-            System.exit( 1 );
-        }
-        // перехват исключения SOAPException
-        catch ( SOAPException soapException ) {
-            System.err.printin( "Error message: " +	soapException.getMessage() );
-            System.exit( 1 );
         }
 
-
-return args;
-}*/
-    }
+}
 
 
 
