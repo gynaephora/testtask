@@ -70,34 +70,38 @@ public class LoginPageActivity extends AppCompatActivity {
                             .addProperty("IP","192.168.1.1");
 
 
-                    CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER12);
+                    CustomSoapSerializationEnvelope envelope = new  CustomSoapSerializationEnvelope(SoapEnvelope.VER11);
                     envelope.setOutputSoapObject(request);
                     Log.i("request",envelope.toString());
                     //Needed to make the internet call
                     HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-
+                    androidHttpTransport.debug = true;
                     //HttpTransportSE androidHttpTransport = new HttpTransportSE(
                     //"http://isapi.mekashron.com/StartAJob/General.dll");
                     try {
                         //this is the actual part that will call the webservice
                         // androidHttpTransport.call("http://isapi.mekashron.com/StartAJob/General.dll", envelope);
-                        androidHttpTransport.debug = true;
+
                        androidHttpTransport.call(SOAP_ACTION, envelope);
+
                         if(androidHttpTransport!=null) {
                             Log.i("HTTP request", androidHttpTransport.requestDump);
                             Log.i("HTTP response", androidHttpTransport.responseDump);
                         }
-                        SoapObject result = (SoapObject)envelope.bodyIn;
-                        SoapObject t=(SoapObject)result.getProperty(0);
-                        //result.getProperty("LoginResponse");
-                        Log.i("response",t.toString());
+                    envelope.enc="http://schemas.xmlsoap.org/soap/encoding/";
+                      envelope.env="http://schemas.xmlsoap.org/soap/envelope/";
+                      SoapObject result=(SoapObject)envelope.bodyIn;
+                      SoapPrimitive rr=(SoapPrimitive)result.getPrimitiveProperty("return");
+                     //result.getProperty("LoginResponse");
+                      Log.i("response",rr.toString());
+                       // Log.i("response",t.getProperty());
                      //  SoapObject result = (SoapObject)envelope.bodyIn;
                      //  Log.i("response",result.getProperty("result").toString());
-//
-                          if(result != null){
+///*
+                         /* if(result != null){
                             Log.i("response",result.toString());
                             response=result.toString();
-                        }
+                        }*/
                         }catch (Exception e) {
                                  e.printStackTrace();
                         response="";
