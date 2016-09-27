@@ -32,6 +32,7 @@ public class LoginPageActivity extends AppCompatActivity {
    private static String URL ="http://isapi.mekashron.com/StartAJob/General.dll/soap/IGeneral";
     RequestItemTask requestItemTask=null;
     HttpTransportSE androidHttpTransport;
+    private boolean httpStat=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,21 +99,20 @@ public class LoginPageActivity extends AppCompatActivity {
                             Object object = envelope.getResponse();
                             JSONObject jObject = new JSONObject(object.toString());
                             String aJsonString;
-                            try {
-                                aJsonString = jObject.getString("ResultMessage");
-                            }catch(Exception e){
-                                aJsonString=jObject.toString();
+                            aJsonString=jObject.toString();
+                            httpStat=true;
+                            response=aJsonString;
                             }
-                         response=aJsonString;
-                        }
 
                         }catch (Exception e) {
                                  e.printStackTrace();
+                        httpStat=false;
                         response="HTTP request failed";
                     }
                     // Get the SoapResult from the envelope body.
 
                 }catch(Exception e){
+                    httpStat=false;
                     response="HTTP request failed";
                 }
                 return response;
@@ -121,12 +121,16 @@ public class LoginPageActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String response) {
                 final TextView resultMessage = (TextView) findViewById(R.id.textView);
-                if(response !="HTTP request failed") {
-                    resultMessage.setText("HTTP request succes"+"\n"+response);
+                final TextView resultResponse = (TextView) findViewById(R.id.textView4);
+                if(httpStat==true) {
+                    resultMessage.setTextColor(Color.BLACK);
+                    resultMessage.setText("HTTP request success");
+                    resultResponse.setText(response);
                 }
                 else {
-                    resultMessage.setText(response);
                     resultMessage.setTextColor(Color.RED);
+                    resultMessage.setText(response);
+                    resultResponse.setText("");
                 }
                 Log.i("response",response.toString());
             }
